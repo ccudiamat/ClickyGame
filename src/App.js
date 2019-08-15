@@ -1,5 +1,6 @@
 import React from "react";
 import CardHolder from "./components/CardHolder";
+import Title from "./components/Title"
 import avatar from "./avatar.json";
 
 class App extends React.Component {
@@ -10,7 +11,7 @@ class App extends React.Component {
     render() {
       return (
         <React.Fragment>
-          <h1 className="title">Avatar: The Last Airbender Memory Game</h1>
+          <Title title="Avatar: The Last Airbender Memory Game" />
           {this.state.avatar.map(character => (
             <CardHolder
               {...character}
