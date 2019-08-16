@@ -11,19 +11,53 @@ class App extends React.Component {
         highscore: 0
     };
 
-    clickedId = () => {
-
+    componentDidMount() {
+        this.setState({ data: this.shuffleData(this.state.avatar)});
     }
 
-    gameOver = () => {
-        if (this.state.score > this.state.highscore) {
-            this.setState({ highscore: this.state.score });
+    shuffleData = avatar => {
+        let i = avatar.length - 1;
+        while (i > 0) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = avatar[i];
+            avatar[i] = avatar[j];
+            avatar[j] = temp;
+            i--;
         }
-        this.state.avatar.forEach(character => {
-            character.clicked = 0;
+        return avatar;
+    }
+
+    clickedId = id => {
+        let guessCorrect = false;
+        const newData = this.state.avatar.map(character =>{
+            const newItem = {...character}
+            if (newItem.id === id) {
+                if (!newItem.clicked) {
+                    newItem.clicked = true;
+                    guessCorrect = true;
+                }
+            }
+            return newItem;
         });
-        alert(`Game Over :( \nscore: ${this.state.score}`);
-        this.setState({ score: 0 });
+        guessCorrect ? this.handleCorrect(newData) : this.gameOver(newData);
+    }
+
+    handleCorrect = data => {
+        this.setState({
+            avatar: this.shuffleData(data),
+            score: this.state.score + 1
+        })
+    }
+
+    gameOver = avatar => {
+        if (this.state.score > this.state.highscore) {
+            this.setState({highscore: this.state.score})}
+        const resetData = avatar.map(character => ({ ...character, clicked: false }));
+        alert(`Oh no, the Fire Nation took over! You lost.. \nYour score: ${this.state.score}`);
+        this.setState({ 
+            score: 0,
+            avatar: resetData
+        })
     }
 
     render() {
@@ -34,6 +68,7 @@ class App extends React.Component {
                     {this.state.avatar.map(character => (
                         <CardHolder
                             clickedId={this.clickedId}
+                            key={character.id}
                             id={character.id}
                             image={character.image}
                         />
